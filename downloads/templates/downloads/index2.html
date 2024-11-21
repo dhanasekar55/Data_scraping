@@ -1,0 +1,88 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download e-sign Certificates</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Chennai 2012-2018</h1>
+
+    <form method="post" action="{% url 'before2018' %}">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <label for="year">Year:</label>
+            <input type="text" id="year" name="year" value="{{ year }}" required>
+        </div>
+
+        <div class="form-row">
+            <label for="zone">Zone :</label>
+            <input type="text" id="zone" name="zone" value="{{ zone }}" required>
+        </div>
+
+        <div class="form-row">
+            <label for="division">Division:</label>
+            <input type="text" id="division" name="division" value="{{ division }}" required>
+        </div>
+
+        <div class="container">
+            <input type="submit" name="count_certificates" value="Search" onclick="showLoader()">
+        </div>
+        {% if count %}
+        <div class="container">
+            <!-- Button for Download CSV above the table -->
+            <input type="submit" name="download_csv" value="Download">
+        </div>
+        {% endif %}
+    </form>
+
+    {% if count %}
+    <div class="table-container">
+        <h2>Total Available Certificates: {{ count }}</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Serial Number</th>
+                    <th>URL</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Date of Death</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in extracted_datas %}
+                <tr>
+                    <td>{{ data.serial_number }}</td>
+                    <td>{{ data.pdf_url }}</td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.gender }}</td>
+                    <td>{{ data.date_of_death }}</td>
+                    <td>{{ data.address }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if no_certificates_message %}
+    <div class="message">
+        <p>{{ no_certificates_message }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Loader -->
+    <div class="loader" id="loader"></div>
+
+    <script>
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
